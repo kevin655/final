@@ -1,0 +1,101 @@
+%第一问 运用5种算子进行检测
+%各种算子的函数生成
+clc；clear;
+function object_detection(image)
+m = imread(image);
+log = edge(m,'log');
+subplot(2,3,2);imshow(log);title('Laplace of gaussian');
+roberts = edge(m,'Roberts');
+subplot(2,3,3);imshow(roberts);title('Roberts');
+prewitt = edge(m,'Prewitt');
+subplot(2,3,4);imshow(prewitt);title('Prewitt');
+sobel = edge(m,'Sobel');
+subplot(2,3,5);imshow(sobel);title('Sobel');
+canny = edge(m,'Canny');
+subplot(2,3,6);imshow(canny);title('Canny');
+%各个图像的显示以及运用各个算子的结果
+m_1 = imread('test4 copy.bmp');
+figure(1);
+subplot(2,3,1);imshow(m_1);title('origin');
+object_detection('test4 copy.bmp');
+m_2 = imread('test2.png');
+figure(2);
+subplot(2,3,1);imshow(m_2);title('origin');
+object_detection('test2.png');
+m_3 = imread('test3.jpg');
+figure(3);
+subplot(2,3,1);imshow(m_3);title('origin');
+object_detection('test3.jpg');
+m_4 = imread('test4.bmp');
+figure(4);
+subplot(2,3,1);imshow(m_4);title('origin');
+object_detection('test4.bmp');
+m_5 = imread('test5.png');
+figure(5);
+subplot(2,3,1);imshow(m_5);title('origin');
+object_detection('test5.png');
+m_6 = imread('test6.jpg');
+figure(6);
+subplot(2,3,1);imshow(m_6);title('origin');
+object_detection('test6.jpg');
+%第二问
+%直线检测
+clc;clear
+dtheta=10;
+drho=10;
+NumPeaks=10;
+tt=0.5;;
+test1=im2double(imread('test1.tif'));
+test1=test1(,,1);
+test2=im2double(imread('test2.png'));
+test3=im2double(imread('test3.jpg'));
+test4=im2double(imread('test4.bmp'));
+test5=im2double(imread('test5.png'));
+test6=im2double(imread('test6.jpg'));
+
+
+
+%Sobel算子
+for k=16
+    test=['test',num2str(k)];
+    eval(['test_s=edge(',test,',''sobel'');;']);
+    figure(1)
+    subplot(2,3,k)
+    imshow(test_s);
+    title(test);
+    figure(2)
+    subplot(2,3,k)
+    HoughTransform(test_s,dtheta,drho,NumPeaks,tt);
+    title(test);
+end
+
+%Canny算子
+for l=16
+    test=['test',num2str(l)];
+    eval(['test_c=edge(',test,',''canny'',[0.1,0.2],1.5);;']);
+    figure(3)
+    subplot(2,3,l)
+    imshow(test_c);
+    title(test);
+    figure(4)
+    subplot(2,3,l)
+    HoughTransform(test_c,dtheta,drho,NumPeaks,tt);
+    title(test);
+end
+
+%霍夫变换
+function []=HoughTransform(im_in,dtheta,drho,NumPeaks,tt)
+%Hough变换
+[H,theta,rho]=hough(im_in,'RhoResolution',drho,'ThetaResolution',dtheta);
+% imshow(H,[],'XData',theta,'YData',rho,'InitialMagnification','fit');
+% axis on,axis,normal
+% xlabel('theta'),ylabel('rho')
+peaks=houghpeaks(H,NumPeaks,'Threshold',tmax(H()));
+lines=houghlines(im_in,theta,rho,peaks);
+imshow(im_in);
+hold on
+for k=1length(lines)
+    xy=[lines(k).point1;lines(k).point2];
+    plot(xy(,1),xy(,2),'LineWidth',2,'Color','r');
+end
+~~~
